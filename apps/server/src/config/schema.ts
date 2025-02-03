@@ -7,6 +7,7 @@ export const configSchema = z.object({
   PORT: z.coerce.number().default(3000),
 
   // URLs
+  INTERNAL_URL: z.string().url(),
   PUBLIC_URL: z.string().url(),
   STORAGE_URL: z.string().url(),
 

@@ -95,12 +95,12 @@ export class PrinterService {
       const browser = await this.getBrowser();
       const page = await browser.newPage();
 
-      const publicUrl = this.configService.getOrThrow<string>("PUBLIC_URL");
+      const internalUrl = this.configService.getOrThrow<string>("INTERNAL_URL");
       const storageUrl = this.configService.getOrThrow<string>("STORAGE_URL");
 
-      let url = publicUrl;
+      let url = internalUrl;
 
-      if ([publicUrl, storageUrl].some((url) => /https?:\/\/localhost(:\d+)?/.test(url))) {
+      if ([internalUrl, storageUrl].some((url) => /https?:\/\/localhost(:\d+)?/.test(url))) {
         // Switch client URL from `http[s]://localhost[:port]` to `http[s]://host.docker.internal[:port]` in development
         // This is required because the browser is running in a container and the client is running on the host machine.
         url = url.replace(
