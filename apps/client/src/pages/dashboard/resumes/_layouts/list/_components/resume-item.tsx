@@ -2,6 +2,7 @@ import { t } from "@lingui/macro";
 import {
   CopySimple,
   DotsThreeVertical,
+  FilePdf,
   FolderOpen,
   Lock,
   LockOpen,
@@ -30,6 +31,11 @@ import { BaseListItem } from "./base-item";
 
 type Props = {
   resume: ResumeDto;
+};
+
+const openInNewTab = (url: string) => {
+  const win = window.open(url, "_blank");
+  if (win) win.focus();
 };
 
 export const ResumeListItem = ({ resume }: Props) => {
@@ -117,6 +123,16 @@ export const ResumeListItem = ({ resume }: Props) => {
         )}
         <ContextMenuSeparator />
         <DropdownMenuItem
+          onClick={(event) => {
+            event.stopPropagation();
+            openInNewTab(resume.storageUrl);
+          }}
+        >
+          <FilePdf size={14} className="mr-2" />
+          {t`Download PDF`}
+        </DropdownMenuItem>
+        <ContextMenuSeparator />
+        <DropdownMenuItem
           className="text-error"
           onClick={(event) => {
             event.stopPropagation();
@@ -166,6 +182,15 @@ export const ResumeListItem = ({ resume }: Props) => {
             {t`Lock`}
           </ContextMenuItem>
         )}
+        <ContextMenuItem
+          onClick={(event) => {
+            event.stopPropagation();
+            openInNewTab(resume.storageUrl);
+          }}
+        >
+          <FilePdf size={14} className="mr-2" />
+          {t`Download PDF`}
+        </ContextMenuItem>
         <ContextMenuSeparator />
         <ContextMenuItem className="text-error" onClick={onDelete}>
           <TrashSimple size={14} className="mr-2" />

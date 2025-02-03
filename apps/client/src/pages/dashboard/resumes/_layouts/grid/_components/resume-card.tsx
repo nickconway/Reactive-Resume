@@ -1,6 +1,7 @@
 import { t } from "@lingui/macro";
 import {
   CopySimple,
+  FilePdf,
   FolderOpen,
   Lock,
   LockOpen,
@@ -26,6 +27,11 @@ import { BaseCard } from "./base-card";
 
 type Props = {
   resume: ResumeDto;
+};
+
+const openInNewTab = (url: string) => {
+  const win = window.open(url, "_blank");
+  if (win) win.focus();
 };
 
 export const ResumeCard = ({ resume }: Props) => {
@@ -115,6 +121,15 @@ export const ResumeCard = ({ resume }: Props) => {
             {t`Lock`}
           </DropdownMenuItem>
         )}
+        <DropdownMenuItem
+          onClick={(event) => {
+            event.stopPropagation();
+            openInNewTab(resume.storageUrl);
+          }}
+        >
+          <FilePdf size={14} className="mr-2" />
+          {t`Download PDF`}
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="text-error" onClick={onDelete}>
           <TrashSimple size={14} className="mr-2" />

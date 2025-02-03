@@ -17,12 +17,15 @@ import { PrinterService } from "@/server/printer/printer.service";
 
 import { StorageService } from "../storage/storage.service";
 
+import { ConfigService } from "@nestjs/config";
+
 @Injectable()
 export class ResumeService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly printerService: PrinterService,
     private readonly storageService: StorageService,
+    private readonly configService: ConfigService,
   ) {}
 
   async create(userId: string, createResumeDto: CreateResumeDto) {
@@ -35,13 +38,17 @@ export class ResumeService {
       basics: { name, email, picture: { url: picture ?? "" } },
     } satisfies DeepPartial<ResumeData>);
 
+    const slug = createResumeDto.slug ?? slugify(createResumeDto.title);
+    const storageUrl = `${this.configService.getOrThrow<string>("STORAGE_URL")}/${userId}/resumes/${slug}.pdf`;
+
     return this.prisma.resume.create({
       data: {
         data,
         userId,
         title: createResumeDto.title,
         visibility: createResumeDto.visibility,
-        slug: createResumeDto.slug ?? slugify(createResumeDto.title),
+        slug: slug,
+        storageUrl: storageUrl,
       },
     });
   }
@@ -49,13 +56,17 @@ export class ResumeService {
   import(userId: string, importResumeDto: ImportResumeDto) {
     const randomTitle = generateRandomName();
 
+    const slug = importResumeDto.slug ?? slugify(randomTitle);
+    const storageUrl = `${this.configService.getOrThrow<string>("STORAGE_URL")}/${userId}/resumes/${slug}.pdf`;
+
     return this.prisma.resume.create({
       data: {
         userId,
         visibility: "private",
         data: importResumeDto.data,
         title: importResumeDto.title ?? randomTitle,
-        slug: importResumeDto.slug ?? slugify(randomTitle),
+        slug: slug,
+        storageUrl: storageUrl,
       },
     });
   }
@@ -110,12 +121,15 @@ export class ResumeService {
 
       if (locked) throw new BadRequestException(ErrorMessage.ResumeLocked);
 
+      const storageUrl = `${this.configService.getOrThrow<string>("STORAGE_URL")}/${userId}/resumes/${updateResumeDto.slug}.pdf`;
+
       return await this.prisma.resume.update({
         data: {
           title: updateResumeDto.title,
           slug: updateResumeDto.slug,
           visibility: updateResumeDto.visibility,
           data: updateResumeDto.data as Prisma.JsonObject,
+          storageUrl: storageUrl,
         },
         where: { userId_id: { userId, id } },
       });

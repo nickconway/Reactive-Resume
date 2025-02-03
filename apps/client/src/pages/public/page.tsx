@@ -21,9 +21,9 @@ const openInNewTab = (url: string) => {
 export const PublicResumePage = () => {
   const frameRef = useRef<HTMLIFrameElement>(null);
 
-  const { printResume, loading } = usePrintResume();
+  const { loading } = usePrintResume();
 
-  const { id, title, data: resume } = useLoaderData();
+  const { title, data: resume, storageUrl } = useLoaderData();
   const format = resume.metadata.page.format as keyof typeof pageSizeMap;
 
   const updateResumeInFrame = useCallback(() => {
@@ -61,12 +61,6 @@ export const PublicResumePage = () => {
     };
   }, [frameRef]);
 
-  const onDownloadPdf = async () => {
-    const { url } = await printResume({ id });
-
-    openInNewTab(url);
-  };
-
   return (
     <div>
       <Helmet>
@@ -101,6 +95,8 @@ export const PublicResumePage = () => {
         <div className="flex flex-col items-center gap-y-2">
           <Button size="icon" variant="ghost" onClick={onDownloadPdf}>
             {loading ? <CircleNotch size={20} className="animate-spin" /> : <FilePdf size={20} />}
+            {/* eslint-disable-next-line lingui/no-unlocalized-strings */}
+            <span>{t`Download PDF`}</span>
           </Button>
 
           <ThemeSwitch />

@@ -62,6 +62,7 @@ model Resume {
   user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
+  storageUrl String
 
   @@unique([userId, id])
   @@unique([userId, slug])
