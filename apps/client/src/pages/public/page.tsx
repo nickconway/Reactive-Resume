@@ -26,6 +26,10 @@ export const PublicResumePage = () => {
   const { title, data: resume, storageUrl } = useLoaderData();
   const format = resume.metadata.page.format as keyof typeof pageSizeMap;
 
+  const onDownloadPdf = () => {
+    openInNewTab(storageUrl);
+  }
+
   const updateResumeInFrame = useCallback(() => {
     const message = { type: "SET_RESUME", payload: resume };
 
